@@ -57,15 +57,15 @@ module Cursorable
       update(MOVES[key])
       nil
     when :return, :space
-      @selected_square = @cursor_position if @selected == false
-      @selected = true
+      @selected_square = (@selected == false) ? @cursor_position : []
+      @selected = !@selected
       @cursor_position
     when :ctrl_c
       exit 0
     when :escape
       @selected = false
       @selected_square = []
-      nil
+      "\e"
     else
       puts key
     end
