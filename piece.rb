@@ -167,18 +167,24 @@ class Pawn < Piece
   def get_valid_moves
     # delta =  color == :white ? 1 : -1
     pos = [position[0] + direction, position[1]]
-    capl = [position[0]+ direction, position[1] + direction]
-    capr = [position[0]+ direction, position[1] - direction]
-    validated_moves = []
+    validated_moves = capture_spaces
     validated_moves << pos if valid_move?(pos)
-    validated_moves << capl if capturable?(capl)
-    validated_moves << capr if capturable?(capr)
 
     unless @moved || !validated_moves.include?(pos)
-      pos2 = [pos[0] + direction, pos[1]]
-      validated_moves << pos2 if valid_move?(pos2)
+      pos = [position[0] + (2*direction), position[1]]
+      valid_move?(pos) ? [pos] : []
     end
+
     validated_moves
+  end
+
+  def capture_spaces
+    capture_moves = []
+    capl = [position[0]+ direction, position[1] + direction]
+    capr = [position[0]+ direction, position[1] - direction]
+    capture_moves << capl if capturable?(capl)
+    capture_moves << capr if capturable?(capr)
+    capture_moves
   end
 
   def direction
