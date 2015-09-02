@@ -84,10 +84,18 @@ class Board
     row >= 0 && row <= 7 && col >= 0 && col <=7
   end
 
-  def check_mate?(color)
+  def in_check_mate?(color)
     @grid.flatten.none? do |piece|
       (piece.color == color) ? !piece.move.empty? : false
     end
+  end
+
+  def check?
+    in_check?(:black) || in_check?(:white)
+  end
+
+  def check_mate?
+    in_check_mate?(:black) || in_check_mate?(:white)
   end
 
   def in_check?(color)
@@ -103,16 +111,22 @@ class Board
 
   end
 
-  def make_move(start_pos, end_pos)
-    if self[start_pos].move.include?(end_pos)
-      if self[end_pos].occupied?
-        self[end_pos] = NullPiece.new
+  def make_move(start_pos, end_pos, color)
+    if self[start_pos].color == color
+      if self[start_pos].move.include?(end_pos)
+        if self[end_pos].occupied?
+          self[end_pos] = NullPiece.new
+        end
+        self[start_pos].position = end_pos
+        self[start_pos], self[end_pos] = self[end_pos], self[start_pos]
+        if self[end_pos].class == Pawn && self[end_pos].moved == false
+          self[end_pos].moved = true
+        end
+        true
       end
-      self[start_pos].position = end_pos
-      self[start_pos], self[end_pos] = self[end_pos], self[start_pos]
-      true
+    else
+      return false
     end
-    return false
   end
 
   def make_move!(start_pos, end_pos)

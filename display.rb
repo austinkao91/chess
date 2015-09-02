@@ -18,7 +18,6 @@ class Display
 
   def render
     system 'clear'
-    puts "Use WASD keys to move around the board"
     row_idx = @grid.grid.length-1
     @grid.grid.reverse_each do |row|
       rows = row.map.with_index do |piece, col_idx|
@@ -28,10 +27,10 @@ class Display
       puts rows.join
       row_idx -= 1
     end
-    puts "check!" if @grid.in_check?(:black)
-    puts "check mate!" if @grid.check_mate?(:black)
     nil
   end
+
+
 
   def color(row,col)
     if @selected_square == [row,col]
@@ -51,14 +50,11 @@ class Display
   def take
     while true
       take_turn
-
     end
   end
 
   def take_turn
-    start_pos = make_first_selection
-    show_move_options(start_pos)
-    end_pos = make_second_selection
+    end_pos = nil
     while end_pos.nil?
       start_pos = make_first_selection
       show_move_options(start_pos)
@@ -71,9 +67,7 @@ class Display
   end
 
   def make_first_selection
-    render
-    puts "Making first selection"
-    input = get_input
+    input = nil
     while !input.is_a?(Array) || !grid[input].occupied?
       render
       puts "Making first selection"
@@ -89,15 +83,16 @@ class Display
   end
 
   def make_second_selection
-    render
-    puts "Making second selection"
-    input = get_input
-    return escape_selection if input == "\e"
+    # render
+    # puts "Making second selection"
+    # input = get_input
+    # return escape_selection if input == "\e" || (input.is_a?(Array) && !@move_positions.include?(input))
+    input = nil
     while !input.is_a?(Array) || !@move_positions.include?(input)
       render
       puts "Making second selection"
       input = get_input
-      return escape_selection if input == "\e"
+      return escape_selection if input == "\e" || (input.is_a?(Array) && !@move_positions.include?(input))
     end
     puts "Second selection made!"
     input
@@ -108,10 +103,10 @@ class Display
     nil
   end
 end
-
-grid = Board.new
-display = Display.new(grid)
-display.take
+#
+# grid = Board.new
+# display = Display.new(grid)
+# display.take
 
 #propt user for piece selection
 #user picks piece

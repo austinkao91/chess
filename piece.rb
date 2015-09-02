@@ -156,29 +156,39 @@ class Bishop < Slidable
 end
 
 class Pawn < Piece
+  attr_accessor :moved
   def initialize(color,pos,board)
     super(color,pos,board)
     @moved = false
   end
 
+
+   # Refactor to make more readable
   def get_valid_moves
-    delta =  color == :white ? 1 : -1
-    pos = [position[0] + delta, position[1]]
-    capl = [position[0]+ delta, position[1] + delta]
-    capr = [position[0]+ delta, position[1] - delta]
+    # delta =  color == :white ? 1 : -1
+    pos = [position[0] + direction, position[1]]
+    capl = [position[0]+ direction, position[1] + direction]
+    capr = [position[0]+ direction, position[1] - direction]
     validated_moves = []
     validated_moves << pos if valid_move?(pos)
     validated_moves << capl if capturable?(capl)
     validated_moves << capr if capturable?(capr)
+
     unless @moved || !validated_moves.include?(pos)
-      pos2 = [pos[0] + delta, pos[1]]
+      pos2 = [pos[0] + direction, pos[1]]
       validated_moves << pos2 if valid_move?(pos2)
     end
     validated_moves
   end
 
+  def direction
+    color == :white ? 1 : -1
+  end
+
   def capturable?(check_pos)
+    # Use a helper method
     if check_pos[1] == (position[1] + 1) || check_pos[1] == (position[1]- 1 )
+      # Use a helper method
       if @board.in_bounds?(check_pos) && @board[check_pos].occupied? && (@board[check_pos].color != self.color)
         return true
       end

@@ -5,39 +5,39 @@ require_relative 'player'
 class Game
 
 
-  def initialize
+  def initialize(player1,player2)
     @board = Board.new
     @display = Display.new(@board)
     @players = [player1,player2]
-    self.play
   end
 
   def play
-    start_game_message
+    start_game
     until over?
       render
-      make_move(prompt_move)
+      take_turn
       rotate_players
     end
     game_over_message
   end
 
-  private
+
   attr_reader :board, :display
   def rotate_players
     @players.rotate!
   end
 
   def over?
-    @board.checkmate?
+    @board.check_mate?
   end
 
-  def start_game_message
+  def start_game
     "Welcome! White player #{@players[0].name} starts!"
+    @players.each {|player| player.get_display(@display)}
   end
 
   def game_over_message
-    puts "#{@players[1]} has put #{@players[0]} in checkmate!"
+    puts "#{@players[1].name} has put #{@players[0].name} in checkmate!"
     puts "#{@players[1].color} has won!"
   end
 
@@ -46,13 +46,15 @@ class Game
     @display.render
   end
 
-  def prompt_move
-    @player[0].get_move
+
+
+  def take_turn
+    @players[0].take_turn
   end
 
-  def make_move(start, end_pos)
-    @board.make_move!(start,end_pos)
-  end
 end
 
-game = Game.new
+a = Player.new("bob", :white)
+b = Player.new("marley", :black)
+game = Game.new(a,b)
+game.play
