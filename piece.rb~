@@ -169,6 +169,7 @@ class Pawn < Piece
     pos = [position[0] + direction, position[1]]
     validated_moves = capture_spaces
     validated_moves << pos if valid_move?(pos)
+	debugger
     unless @moved || !validated_moves.include?(pos)
 
       pos = [position[0] + (2*direction), position[1]]
